@@ -9,6 +9,8 @@ img { max-width: 100%; }
   --time: #F5C748;
   --cert: #EA4E11;
   --header:#D1D9CE;
+  --blockbg: #D1D9CE80;
+  --blockborder: #D1D9CE;
 }
 
 /* rainbow borders */
@@ -21,11 +23,13 @@ body {
               0 -20px 0 0px var(--header);
 }
 
+.code-block-background:"#D1D9CE80"
+.code-block-border-left: "true"
 
 /* colour-coded sction headers */
 .sidebar-item-section > .sidebar-item.container .sidebar-item-text {
   font-weight: bold; font-variant: small-caps;
 }
 
-.sidebar-item-text[data-bs-target="#quarto-sidebar-section-comparisons"] {color: var(--comparisons);}
+.sidebar-item-text[data-bs-target="#quarto-sidebar-section-Comparisons"] {color: var(--dist);}
 .sidebar-item-text[data-bs-target="#quarto-sidebar-section-distributions"] {color: var(--distributions);}

@@ -9,15 +9,15 @@ book:
   # image: images/custom/prompts.png
   chapters:
     - index.qmd
-    - part: "comparisons"
+    - part: "Comparisons"
       chapters: 
-        - intro.qmd
-        - summary.qmd
-    - part: "distributions"
-      chapters: 
-        - intro.qmd
-        - summary.qmd
-        - references.qmd
+        - chapters/part-to-whole.qmd
+    # - part: "Distributions"
+    #   chapters: 
+    #     - blank.qmd
+    #     - blank.qmd
+        # - blank.qmd
+    - part: references.qmd
   # sidebar:
   #   style: docked
   #   background: white
@@ -33,7 +33,8 @@ format:
     code-line-numbers: true
     code-overflow: wrap
     code-copy: true
-    # code-block-border-left: "#4864DB"
+    code-block-bg: "#D1D9CE80"
+    code-block-border-left: "#D1D9CE"
     highlight-style: a11y
     # monofont: Fira Code
     # mainfont: Open Sans

@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "30 Day Coding Challenge (2023)",
     "section": "",
-    "text": "Introduction\nInspired by Lisa de Bruine’s tour de force portfolio with last year’s challenge, I have decided to spend April sharpening my tidyverse and data visualisation skills by engaging"
+    "text": "Introduction"
   },
   {
     "objectID": "intro.html",
@@ -26,5 +26,12 @@
     "title": "References",
     "section": "",
     "text": "Knuth, Donald E. 1984. “Literate Programming.” Comput.\nJ. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+  },
+  {
+    "objectID": "chapters/part-to-whole.html",
+    "href": "chapters/part-to-whole.html",
+    "title": "\n1  Part-to-whole\n",
+    "section": "",
+    "text": "library(tidyverse)\n\n\nCodedata &lt;- tibble(\n  x = rnorm(1000), \n  y = rnorm(1000)\n)\ndata\n\n# A tibble: 1,000 × 2\n        x      y\n    &lt;dbl&gt;  &lt;dbl&gt;\n 1 -0.548 -0.911\n 2 -1.01  -0.336\n 3 -0.732 -0.936\n 4 -0.356  0.408\n 5 -2.27  -0.857\n 6  0.406  1.48 \n 7 -0.294 -0.952\n 8 -1.68   1.54 \n 9 -1.64   0.375\n10 -1.45   0.997\n# … with 990 more rows"
   }
 ]

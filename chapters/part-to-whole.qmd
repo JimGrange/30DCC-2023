@@ -1,0 +1,21 @@
+---
+title: "Part-to-whole"
+---
+
+```{r}
+#| code-summary: Code
+#| code-fold: false
+#| warning: false
+#| message: false
+library(tidyverse)
+```
+
+
+```{r}
+data <- tibble(
+  x = rnorm(1000), 
+  y = rnorm(1000)
+)
+data
+```
+
