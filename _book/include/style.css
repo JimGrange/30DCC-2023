@@ -1,0 +1,30 @@
+img { max-width: 100%; }
+
+:root {
+  --comparisons: #4864DB;
+  --distributions: #10D4CF;
+  --comp: #4864DB;
+  --dist: #10D4CF;
+  --rels: #8DEA74;
+  --time: #F5C748;
+  --cert: #EA4E11;
+}
+
+/* rainbow borders */
+body {
+  margin-top: 20px;
+  box-shadow: 0 -4px 0 0px var(--dist),
+              0 -8px 0 0px var(--dist),
+              0 -12px 0 0px var(--dist),
+              0 -16px 0 0px var(--dist),
+              0 -20px 0 0px var(--dist);
+}
+
+
+/* colour-coded sction headers */
+.sidebar-item-section > .sidebar-item.container .sidebar-item-text {
+  font-weight: bold; font-variant: small-caps;
+}
+
+.sidebar-item-text[data-bs-target="#quarto-sidebar-section-comparisons"] {color: var(--comparisons);}
+.sidebar-item-text[data-bs-target="#quarto-sidebar-section-distributions"] {color: var(--distributions);}

@@ -1,0 +1,6 @@
+# Introduction {.unnumbered}
+
+Inspired by [Lisa de Bruine's](https://debruine.github.io/30DCC-2022/) tour de force portfolio with last year's challenge, I have decided to spend April sharpening my `tidyverse` and data visualisation skills by engaging 
+![](images/prompts.png)
+
+
