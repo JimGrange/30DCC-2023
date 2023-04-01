@@ -33,5 +33,12 @@
     "title": "\n1  Part-to-whole\n",
     "section": "",
     "text": "library(tidyverse)\n\n\nCodedata &lt;- tibble(\n  x = rnorm(1000), \n  y = rnorm(1000)\n)\ndata\n\n# A tibble: 1,000 × 2\n        x      y\n    &lt;dbl&gt;  &lt;dbl&gt;\n 1 -0.548 -0.911\n 2 -1.01  -0.336\n 3 -0.732 -0.936\n 4 -0.356  0.408\n 5 -2.27  -0.857\n 6  0.406  1.48 \n 7 -0.294 -0.952\n 8 -1.68   1.54 \n 9 -1.64   0.375\n10 -1.45   0.997\n# … with 990 more rows"
+  },
+  {
+    "objectID": "chapters/01-part-to-whole.html",
+    "href": "chapters/01-part-to-whole.html",
+    "title": "\n1  Part-to-whole\n",
+    "section": "",
+    "text": "I will be honest, I didn’t know what was meant by a “part-to-whole” data visualisation, so I did what all the cool kids are doing these days and I asked Chat-GPT:\n\n\nlibrary(tidyverse)\n\n\nCodedata &lt;- tibble(\n  x = rnorm(1000), \n  y = rnorm(1000)\n)\ndata\n\n# A tibble: 1,000 × 2\n         x       y\n     &lt;dbl&gt;   &lt;dbl&gt;\n 1 -0.384   0.193 \n 2 -0.415  -0.0172\n 3 -1.46   -0.0567\n 4 -0.285  -0.506 \n 5 -0.0270 -0.227 \n 6  0.617   0.487 \n 7  0.0875  0.957 \n 8  0.340   0.427 \n 9  2.28   -0.757 \n10  1.14    1.32  \n# … with 990 more rows"
   }
 ]
