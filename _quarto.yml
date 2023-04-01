@@ -1,8 +1,9 @@
 project:
   type: book
-
+  output-dir: docs
+  
 book:
-  title: "30 Day Coding Challenge"
+  title: "30 Day Coding Challenge (2023)"
   author: "Jim Grange"
   # cover-image: images/custom/prompts.png
   # image: images/custom/prompts.png
