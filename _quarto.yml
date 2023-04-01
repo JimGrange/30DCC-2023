@@ -1,7 +1,6 @@
 project:
   type: book
   output-dir: docs
-  
 book:
   title: "30 Day Coding Challenge (2023)"
   author: "Jim Grange"
@@ -11,7 +10,7 @@ book:
     - index.qmd
     - part: "Comparisons"
       chapters: 
-        - chapters/part-to-whole.qmd
+        - chapters/01-part-to-whole.qmd
     # - part: "Distributions"
     #   chapters: 
     #     - blank.qmd
@@ -22,7 +21,6 @@ book:
   #   style: docked
   #   background: white
 bibliography: references.bib
-
 format:
   html:
     theme: 
@@ -36,8 +34,5 @@ format:
     code-block-bg: "#D1D9CE80"
     code-block-border-left: "#D1D9CE"
     highlight-style: a11y
-    # monofont: Fira Code
-    # mainfont: Open Sans
     css: include/style.css
-    
 editor: visual

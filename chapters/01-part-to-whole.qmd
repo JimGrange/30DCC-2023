@@ -2,6 +2,10 @@
 title: "Part-to-whole"
 ---
 
+I will be honest, I didn't know what was meant by a "part-to-whole" data visualisation, so I did what all the cool kids are doing these days and I asked Chat-GPT:
+
+![](images/01-gpt.jpg)
+
 ```{r}
 #| code-summary: Code
 #| code-fold: false
@@ -10,7 +14,6 @@ title: "Part-to-whole"
 library(tidyverse)
 ```
 
-
 ```{r}
 data <- tibble(
   x = rnorm(1000), 
@@ -18,4 +21,3 @@ data <- tibble(
 )
 data
 ```
-
