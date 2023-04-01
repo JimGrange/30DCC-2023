@@ -27,8 +27,8 @@ format:
       light: yeti
       dark: darkly
     code-link: true
-    code-fold: true
-    code-line-numbers: true
+    code-fold: false
+    code-line-numbers: false
     code-overflow: wrap
     code-copy: true
     code-block-bg: "#D1D9CE80"

@@ -23,8 +23,6 @@ body {
               0 -20px 0 0px var(--header);
 }
 
-.code-block-background:"#D1D9CE80"
-.code-block-border-left: "true"
 
 /* colour-coded sction headers */
 .sidebar-item-section > .sidebar-item.container .sidebar-item-text {

@@ -155,7 +155,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </nav><div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li><a href="#ultrarunning-eating" id="toc-ultrarunning-eating" class="nav-link active" data-scroll-target="#ultrarunning-eating"><span class="header-section-number">1.1</span> Ultrarunning &amp; Eating</a></li>
+  <li><a href="#simulating-the-data" id="toc-simulating-the-data" class="nav-link" data-scroll-target="#simulating-the-data"><span class="header-section-number">1.2</span> Simulating the data</a></li>
+  <li>
+<a href="#different-visualisations" id="toc-different-visualisations" class="nav-link" data-scroll-target="#different-visualisations"><span class="header-section-number">1.3</span> Different Visualisations</a>
+  <ul class="collapse">
+<li><a href="#bar-plot" id="toc-bar-plot" class="nav-link" data-scroll-target="#bar-plot"><span class="header-section-number">1.3.1</span> Bar plot</a></li>
+  <li><a href="#stacked-column-plot" id="toc-stacked-column-plot" class="nav-link" data-scroll-target="#stacked-column-plot"><span class="header-section-number">1.3.2</span> Stacked column plot</a></li>
+  <li><a href="#polar-plot" id="toc-polar-plot" class="nav-link" data-scroll-target="#polar-plot"><span class="header-section-number">1.3.3</span> Polar plot</a></li>
+  </ul>
+</li>
+  <li><a href="#grouping-by-day" id="toc-grouping-by-day" class="nav-link" data-scroll-target="#grouping-by-day"><span class="header-section-number">1.4</span> Grouping by day</a></li>
+  </ul></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
@@ -175,37 +189,240 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
 
 </header><p>I will be honest, I didn’t know what was meant by a “part-to-whole” data visualisation, so I did what all the cool kids are doing these days and I asked Chat-GPT:</p>
-<p><img src="images/01-gpt.jpg" class="quarto-discovered-preview-image img-fluid"></p>
+<p><img src="images/01-gpt.jpg" class="quarto-discovered-preview-image img-fluid" style="width:60.0%"></p>
+<p>OK, that’s a little clearer. What is more clear is that I am <strong>not</strong> going to do a pie chart!</p>
+<section id="ultrarunning-eating" class="level2" data-number="1.1"><h2 data-number="1.1" class="anchored" data-anchor-id="ultrarunning-eating">
+<span class="header-section-number">1.1</span> Ultrarunning &amp; Eating</h2>
+<p>Since the UK lockdown in March 2020 I’ve caught the running bug. Last year, I completed my first marathon, and I have signed up to two marathons this year. The marathon is—obviously—a tough distance; but some (crazy) people run <em>Ultra</em>-marathons which is any race longer than the 26.2 miles of a standard marathon.</p>
+<p>If you’re training for an ultra-marathon, you probably want to make sure your diet during your training is good to ensure you are getting the necessary nutrients and energy. It’s not untypical for ultra-runners to consume anywhere between 3,000 to 6,000 calories a day during training. As for macro-nutrient recommendations, the guidelines for ultra-runners are not very different from those for other endurance athletes. The general recommendation for endurance athletes is as follows:</p>
+<ul>
+<li>
+<strong>Carbohydrates:</strong> 45-65% of total daily calories.</li>
+<li>
+<strong>Protein:</strong> 15-20% of total daily calories.</li>
+<li>
+<strong>Fats:</strong> 20-35% of total daily calories.</li>
+</ul>
+<p>Let’s say you’re interested in making a daily log of your total daily calorie intake together with tracking your macro-nutrients. For each day, how did each of the macro-nutrients (i.e., the <em>part</em>) contribute to total calorie intake (i.e., the <em>whole</em>)?</p>
+</section><section id="simulating-the-data" class="level2" data-number="1.2"><h2 data-number="1.2" class="anchored" data-anchor-id="simulating-the-data">
+<span class="header-section-number">1.2</span> Simulating the data</h2>
+<p>First let’s load the required packages and do a general set-up:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html">theme_set</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s simulate data for the month of April 2023. For each day, we log/generate the following data:</p>
+<ul>
+<li><p><strong>date</strong>: Date of the daily log</p></li>
+<li><p><strong>day:</strong> What was the day of the week? We might be interested how</p></li>
+<li><p><strong>week:</strong> In order to differentiate Tuesday from week 1 from Tuesday from week 2</p></li>
+<li><p><strong>calories_total:</strong> Simulate total daily calorie intake. For this we assume a normal distribution with mean of 3,000 calories and a standard deviation of 250.</p></li>
+<li><p><strong>prop_carbs:</strong> For each day, what is the proportion of total calories made up from carbohydrates. As this is a proportion, for each day we generate a random number between 0.45 and 0.65.</p></li>
+<li><p><strong>prop_protein:</strong> For each day, what is the proportion of total calories made up from protein? For each day we generate a random number between 0.15 and 0.20.</p></li>
+<li><p><strong>prop_fat:</strong> For each day, what is the proportion of total calories made up from fat? As the proportions for each macro-nutrient need to sum to 1, fat is just 1 minus prop_carbs and prop_protein.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># simulate the data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
+<span>  date <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html">ymd</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"2023-04-"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">30</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>  day <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html">wday</a></span><span class="op">(</span><span class="va">date</span>, label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, </span>
+<span>  week <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/week.html">week</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>,</span>
+<span>  calories_total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">30</span>, mean <span class="op">=</span> <span class="fl">3000</span>, sd <span class="op">=</span> <span class="fl">250</span><span class="op">)</span>, </span>
+<span>  prop_carbs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">30</span>, min <span class="op">=</span> <span class="fl">0.45</span>, max <span class="op">=</span> <span class="fl">0.65</span><span class="op">)</span>, </span>
+<span>  prop_protein <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">30</span>, min <span class="op">=</span> <span class="fl">0.15</span>, max <span class="op">=</span> <span class="fl">0.20</span><span class="op">)</span>, </span>
+<span>  prop_fat <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="op">(</span><span class="va">prop_carbs</span> <span class="op">+</span> <span class="va">prop_protein</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="va">data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30 × 7
+   date       day    week calories_total prop_carbs prop_protein prop_fat
+   &lt;date&gt;     &lt;ord&gt; &lt;dbl&gt;          &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;    &lt;dbl&gt;
+ 1 2023-04-01 Sat      13          2860.      0.583        0.157    0.260
+ 2 2023-04-02 Sun      14          2942.      0.469        0.183    0.348
+ 3 2023-04-03 Mon      14          3390.      0.527        0.167    0.306
+ 4 2023-04-04 Tue      14          3018.      0.505        0.183    0.312
+ 5 2023-04-05 Wed      14          3032.      0.613        0.166    0.221
+ 6 2023-04-06 Thu      14          3429.      0.540        0.159    0.301
+ 7 2023-04-07 Fri      14          3115.      0.612        0.189    0.199
+ 8 2023-04-08 Sat      14          2684.      0.612        0.155    0.233
+ 9 2023-04-09 Sun      15          2828.      0.609        0.173    0.218
+10 2023-04-10 Mon      15          2889.      0.538        0.176    0.286
+# … with 20 more rows</code></pre>
+</div>
+</div>
+<p>We can then use these proportions for each macro to simulate how many of the day’s total calories were from carbohydrates, protein, and fats. Once we have this we can remove the proportion columns.</p>
+<div class="cell">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>calories_carbs <span class="op">=</span> <span class="va">calories_total</span> <span class="op">*</span> <span class="va">prop_carbs</span>, </span>
+<span>         calories_protein <span class="op">=</span> <span class="va">calories_total</span> <span class="op">*</span> <span class="va">prop_protein</span>, </span>
+<span>         calories_fat <span class="op">=</span> <span class="va">calories_total</span> <span class="op">*</span> <span class="va">prop_fat</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span><span class="op">(</span><span class="st">"prop_"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">data</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30 × 7
+   date       day    week calories_total calories_carbs calories_protein calor…¹
+   &lt;date&gt;     &lt;ord&gt; &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt;            &lt;dbl&gt;   &lt;dbl&gt;
+ 1 2023-04-01 Sat      13          2860.          1667.             448.    745.
+ 2 2023-04-02 Sun      14          2942.          1380.             537.   1025.
+ 3 2023-04-03 Mon      14          3390.          1786.             567.   1037.
+ 4 2023-04-04 Tue      14          3018.          1524.             552.    942.
+ 5 2023-04-05 Wed      14          3032.          1859.             503.    670.
+ 6 2023-04-06 Thu      14          3429.          1851.             546.   1032.
+ 7 2023-04-07 Fri      14          3115.          1907.             589.    620.
+ 8 2023-04-08 Sat      14          2684.          1644.             415.    625.
+ 9 2023-04-09 Sun      15          2828.          1722.             490.    616.
+10 2023-04-10 Mon      15          2889.          1554.             507.    827.
+# … with 20 more rows, and abbreviated variable name ¹​calories_fat</code></pre>
+</div>
+</div>
+<p>In order for us to do visualisations we need to change the calorie data into long format.</p>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">calories_total</span><span class="op">:</span><span class="va">calories_fat</span>, </span>
+<span>               names_to <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>source <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="va">source</span>,<span class="st">"calories_"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 120 × 5
+   date       day    week source  value
+   &lt;date&gt;     &lt;ord&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;
+ 1 2023-04-01 Sat      13 total   2860.
+ 2 2023-04-01 Sat      13 carbs   1667.
+ 3 2023-04-01 Sat      13 protein  448.
+ 4 2023-04-01 Sat      13 fat      745.
+ 5 2023-04-02 Sun      14 total   2942.
+ 6 2023-04-02 Sun      14 carbs   1380.
+ 7 2023-04-02 Sun      14 protein  537.
+ 8 2023-04-02 Sun      14 fat     1025.
+ 9 2023-04-03 Mon      14 total   3390.
+10 2023-04-03 Mon      14 carbs   1786.
+# … with 110 more rows</code></pre>
+</div>
+</div>
+</section><section id="different-visualisations" class="level2" data-number="1.3"><h2 data-number="1.3" class="anchored" data-anchor-id="different-visualisations">
+<span class="header-section-number">1.3</span> Different Visualisations</h2>
+<section id="bar-plot" class="level3" data-number="1.3.1"><h3 data-number="1.3.1" class="anchored" data-anchor-id="bar-plot">
+<span class="header-section-number">1.3.1</span> Bar plot</h3>
+<p>Ahh the good old bar plot. Not really useful for a part-to-whole visualisation, but here it is anyway:</p>
+<div class="cell">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bar</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">source</span> <span class="op">!=</span> <span class="st">"total"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span>, group <span class="op">=</span> <span class="va">source</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">source</span><span class="op">)</span>, </span>
+<span>           position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>       y <span class="op">=</span><span class="st">"Calories Consumed"</span>, </span>
+<span>       fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">bar</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="01-part-to-whole_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section><section id="stacked-column-plot" class="level3" data-number="1.3.2"><h3 data-number="1.3.2" class="anchored" data-anchor-id="stacked-column-plot">
+<span class="header-section-number">1.3.2</span> Stacked column plot</h3>
+<p>A stacked column plot is similar to the bar plot but the bars are—you guessed it—stacked on top of each other:</p>
+<div class="cell">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">stacked_column</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">source</span> <span class="op">!=</span> <span class="st">"total"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">source</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>       y <span class="op">=</span><span class="st">"Calories Consumed"</span>, </span>
+<span>       fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">stacked_column</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="01-part-to-whole_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section><section id="polar-plot" class="level3" data-number="1.3.3"><h3 data-number="1.3.3" class="anchored" data-anchor-id="polar-plot">
+<span class="header-section-number">1.3.3</span> Polar plot</h3>
+<p>I am not sure if this is the correct term for it, but you can wrap the column plot around polar coordinates using <code><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html">coord_polar()</a></code> in ggplot. This makes it look snazzier, but I am not sure it is more informative.</p>
+<div class="cell">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">polar</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">source</span> <span class="op">!=</span> <span class="st">"total"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">source</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html">coord_polar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>       y <span class="op">=</span><span class="st">"Calories Consumed"</span>, </span>
+<span>       fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">polar</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="01-part-to-whole_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>This isn’t satisfactory because it’s hard to visualise the category (protein) with the smallest proportion. To address this we can reverse the ordering on the <code><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col()</a></code> call using the <code>position</code> argument:</p>
+<div class="cell">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">polar_reversed</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">source</span> <span class="op">!=</span> <span class="st">"total"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">source</span><span class="op">)</span>, </span>
+<span>           position <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/position_stack.html">position_stack</a></span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html">coord_polar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>       y <span class="op">=</span><span class="st">"Calories Consumed"</span>, </span>
+<span>       fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">polar_reversed</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="01-part-to-whole_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Here they are all next to each other:</p>
+<div class="cell">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span></span>
+<span><span class="op">(</span><span class="va">bar</span> <span class="op">+</span> <span class="va">stacked_column</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">polar</span> <span class="op">+</span> <span class="va">polar_reversed</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="01-part-to-whole_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section></section><section id="grouping-by-day" class="level2" data-number="1.4"><h2 data-number="1.4" class="anchored" data-anchor-id="grouping-by-day">
+<span class="header-section-number">1.4</span> Grouping by day</h2>
+<p>Maybe you want to log how your macros vary on average by day. To do this, we group our data by the day of teh week and calculate averages for each day and plot these. We need to briefly go back to wide data to calculate the relevant averages</p>
+<div class="cell">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">day_data</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">source</span>, values_from <span class="op">=</span> <span class="va">value</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">day</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>carbs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">carbs</span><span class="op">)</span>, </span>
+<span>            protein <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">protein</span><span class="op">)</span>, </span>
+<span>            fat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">fat</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">carbs</span><span class="op">:</span><span class="va">fat</span>, names_to <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span>
+<span><span class="va">day_data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 21 × 3
+   day   source  value
+   &lt;ord&gt; &lt;chr&gt;   &lt;dbl&gt;
+ 1 Sun   carbs   1575.
+ 2 Sun   protein  536.
+ 3 Sun   fat      943.
+ 4 Mon   carbs   1674.
+ 5 Mon   protein  560.
+ 6 Mon   fat      821.
+ 7 Tue   carbs   1571.
+ 8 Tue   protein  532.
+ 9 Tue   fat      816.
+10 Wed   carbs   1669.
+# … with 11 more rows</code></pre>
+</div>
 </div>
 <div class="cell">
-<details><summary>Code</summary><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb2-2"><a href="#cb2-2"></a>  <span class="at">x =</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>), </span>
-<span id="cb2-3"><a href="#cb2-3"></a>  <span class="at">y =</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>)</span>
-<span id="cb2-4"><a href="#cb2-4"></a>)</span>
-<span id="cb2-5"><a href="#cb2-5"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details><div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1,000 × 2
-         x       y
-     &lt;dbl&gt;   &lt;dbl&gt;
- 1 -0.384   0.193 
- 2 -0.415  -0.0172
- 3 -1.46   -0.0567
- 4 -0.285  -0.506 
- 5 -0.0270 -0.227 
- 6  0.617   0.487 
- 7  0.0875  0.957 
- 8  0.340   0.427 
- 9  2.28   -0.757 
-10  1.14    1.32  
-# … with 990 more rows</code></pre>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">day_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">day</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">source</span><span class="op">)</span>, </span>
+<span>           position <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/position_stack.html">position_stack</a></span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html">coord_polar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>       y <span class="op">=</span><span class="st">"Calories Consumed"</span>, </span>
+<span>       fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="01-part-to-whole_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
 
-
-</main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");

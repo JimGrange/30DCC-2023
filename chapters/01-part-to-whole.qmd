@@ -4,7 +4,25 @@ title: "Part-to-whole"
 
 I will be honest, I didn't know what was meant by a "part-to-whole" data visualisation, so I did what all the cool kids are doing these days and I asked Chat-GPT:
 
-![](images/01-gpt.jpg)
+![](images/01-gpt.jpg){width="60%"}
+
+OK, that's a little clearer. What is more clear is that I am **not** going to do a pie chart!
+
+## Ultrarunning & Eating
+
+Since the UK lockdown in March 2020 I've caught the running bug. Last year, I completed my first marathon, and I have signed up to two marathons this year. The marathon is---obviously---a tough distance; but some (crazy) people run *Ultra*-marathons which is any race longer than the 26.2 miles of a standard marathon.
+
+If you're training for an ultra-marathon, you probably want to make sure your diet during your training is good to ensure you are getting the necessary nutrients and energy. It's not untypical for ultra-runners to consume anywhere between 3,000 to 6,000 calories a day during training. As for macro-nutrient recommendations, the guidelines for ultra-runners are not very different from those for other endurance athletes. The general recommendation for endurance athletes is as follows:
+
+-   **Carbohydrates:** 45-65% of total daily calories.
+-   **Protein:** 15-20% of total daily calories.
+-   **Fats:** 20-35% of total daily calories.
+
+Let's say you're interested in making a daily log of your total daily calorie intake together with tracking your macro-nutrients. For each day, how did each of the macro-nutrients (i.e., the *part*) contribute to total calorie intake (i.e., the *whole*)?
+
+## Simulating the data
+
+First let's load the required packages and do a general set-up:
 
 ```{r}
 #| code-summary: Code
@@ -12,12 +30,158 @@ I will be honest, I didn't know what was meant by a "part-to-whole" data visuali
 #| warning: false
 #| message: false
 library(tidyverse)
+
+theme_set(theme_bw())
+```
+
+Let's simulate data for the month of April 2023. For each day, we log/generate the following data:
+
+-   **date**: Date of the daily log
+
+-   **day:** What was the day of the week? We might be interested how
+
+-   **week:** In order to differentiate Tuesday from week 1 from Tuesday from week 2
+
+-   **calories_total:** Simulate total daily calorie intake. For this we assume a normal distribution with mean of 3,000 calories and a standard deviation of 250.
+
+-   **prop_carbs:** For each day, what is the proportion of total calories made up from carbohydrates. As this is a proportion, for each day we generate a random number between 0.45 and 0.65.
+
+-   **prop_protein:** For each day, what is the proportion of total calories made up from protein? For each day we generate a random number between 0.15 and 0.20.
+
+-   **prop_fat:** For each day, what is the proportion of total calories made up from fat? As the proportions for each macro-nutrient need to sum to 1, fat is just 1 minus prop_carbs and prop_protein.
+
+```{r}
+# simulate the data
+set.seed(123)
+
+data <- tibble(
+  date = lubridate::ymd(paste("2023-04-", 1:30, sep = "")), 
+  day = lubridate::wday(date, label = TRUE), 
+  week = lubridate::week(date),
+  calories_total = rnorm(n = 30, mean = 3000, sd = 250), 
+  prop_carbs = runif(n = 30, min = 0.45, max = 0.65), 
+  prop_protein = runif(n = 30, min = 0.15, max = 0.20), 
+  prop_fat = 1 - (prop_carbs + prop_protein)
+  )
+data
+```
+
+We can then use these proportions for each macro to simulate how many of the day's total calories were from carbohydrates, protein, and fats. Once we have this we can remove the proportion columns.
+
+```{r}
+data <- data %>% 
+  mutate(calories_carbs = calories_total * prop_carbs, 
+         calories_protein = calories_total * prop_protein, 
+         calories_fat = calories_total * prop_fat) %>% 
+  select(-starts_with("prop_"))
+data 
+```
+
+In order for us to do visualisations we need to change the calorie data into long format.
+
+```{r}
+data <- data %>% 
+  pivot_longer(calories_total:calories_fat, 
+               names_to = "source") %>% 
+  mutate(source = str_remove(source,"calories_"))
+data
+```
+
+## Different Visualisations
+
+### Bar plot
+
+Ahh the good old bar plot. Not really useful for a part-to-whole visualisation, but here it is anyway:
+
+```{r}
+bar <- data %>% 
+  filter(source != "total") %>% 
+  ggplot(aes(x = date, y = value, group = source)) + 
+  geom_col(aes(fill = source), 
+           position = "dodge") + 
+  labs(x = NULL, 
+       y ="Calories Consumed", 
+       fill = NULL)
+bar
+```
+
+### Stacked column plot
+
+A stacked column plot is similar to the bar plot but the bars are---you guessed it---stacked on top of each other:
+
+```{r}
+stacked_column <- data %>% 
+  filter(source != "total") %>% 
+  ggplot(aes(x = date, y = value)) + 
+  geom_col(aes(fill = source)) + 
+  labs(x = NULL, 
+       y ="Calories Consumed", 
+       fill = NULL)
+stacked_column
+```
+
+### Polar plot
+
+I am not sure if this is the correct term for it, but you can wrap the column plot around polar coordinates using `coord_polar()` in ggplot. This makes it look snazzier, but I am not sure it is more informative.
+
+```{r}
+polar <- data %>% 
+  filter(source != "total") %>% 
+  ggplot(aes(x = date, y = value)) + 
+  geom_col(aes(fill = source)) + 
+  coord_polar() +
+  labs(x = NULL, 
+       y ="Calories Consumed", 
+       fill = NULL)
+polar
+```
+
+This isn't satisfactory because it's hard to visualise the category (protein) with the smallest proportion. To address this we can reverse the ordering on the `geom_col()` call using the `position` argument:
+
+```{r}
+polar_reversed <- data %>% 
+  filter(source != "total") %>% 
+  ggplot(aes(x = date, y = value)) + 
+  geom_col(aes(fill = source), 
+           position = position_stack(reverse = TRUE)) + 
+  coord_polar() +
+  labs(x = NULL, 
+       y ="Calories Consumed", 
+       fill = NULL)
+polar_reversed
+```
+
+      
+Here they are all next to each other:
+
+
+
+```{r}
+library(patchwork)
+(bar + stacked_column) / (polar + polar_reversed)
+```
+
+## Grouping by day
+Maybe you want to log how your macros vary on average by day. To do this, we group our data by the day of teh week and calculate averages for each day and plot these. We need to briefly go back to wide data to calculate the relevant averages
+
+```{r}
+day_data <- data %>% 
+  pivot_wider(names_from = source, values_from = value) %>% 
+  group_by(day) %>% 
+  summarise(carbs = mean(carbs), 
+            protein = mean(protein), 
+            fat = mean(fat)) %>% 
+  pivot_longer(carbs:fat, names_to = "source")
+day_data
 ```
 
 ```{r}
-data <- tibble(
-  x = rnorm(1000), 
-  y = rnorm(1000)
-)
-data
+day_data %>% 
+  ggplot(aes(x = day, y = value)) + 
+  geom_col(aes(fill = source), 
+           position = position_stack(reverse = TRUE)) + 
+  coord_polar() +
+  labs(x = NULL, 
+       y ="Calories Consumed", 
+       fill = NULL)
 ```
