@@ -4,7 +4,7 @@ title: "Part-to-whole"
 
 I will be honest, I didn't know what was meant by a "part-to-whole" data visualisation, so I did what all the cool kids are doing these days and I asked Chat-GPT:
 
-![](images/01-gpt.jpg){width="60%"}
+![](images/01-gpt.jpg){width="75%"}
 
 OK, that's a little clearer. What is more clear is that I am **not** going to do a pie chart!
 
