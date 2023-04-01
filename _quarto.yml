@@ -6,6 +6,7 @@ book:
   author: "Jim Grange"
   # cover-image: images/custom/prompts.png
   # image: images/custom/prompts.png
+  twitter-card: true
   chapters:
     - index.qmd
     - part: "Comparisons"
