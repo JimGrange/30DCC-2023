@@ -12,6 +12,7 @@ book:
     - part: "Comparisons"
       chapters: 
         - chapters/01-part-to-whole.qmd
+        - chapters/02-waffle.qmd
     # - part: "Distributions"
     #   chapters: 
     #     - blank.qmd
